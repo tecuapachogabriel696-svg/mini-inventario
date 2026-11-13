@@ -27,3 +27,6 @@ El agente supuso que **cualquier persona puede registrarse**, aunque yo no conte
 - Inicié sesión con `gh auth login` (GitHub.com, HTTPS, navegador) y lo comprobé con `gh auth status`.
 - Como el repositorio es de Gab, el agente no tenía permiso para subir cambios. Decidí que el agente preparara los archivos y los comandos, y yo los ejecuté en mi PowerShell leyendo cada uno antes.
 - Los issues quedaron como #3 a #7.
+
+
+   Pull request: https://github.com/tecuapachogabriel696-svg/mini-inventario/pull/8
