@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mini Inventario</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <h1>Mini Inventario</h1>
+
+    <section>
+      <h2 id="titulo-form">Agregar producto</h2>
+      <form id="form-producto" novalidate>
+        <label>Nombre
+          <input name="nombre" type="text" autocomplete="off">
+        </label>
+        <label>SKU
+          <input name="sku" type="text" autocomplete="off" placeholder="TOR-001">
+        </label>
+        <label>Cantidad
+          <input name="cantidad" type="text" inputmode="numeric">
+        </label>
+        <label>Mínimo
+          <input name="minimo" type="text" inputmode="numeric" value="5">
+        </label>
+        <div class="acciones">
+          <button type="submit" id="btn-guardar">Agregar</button>
+          <button type="button" id="btn-cancelar" hidden>Cancelar</button>
+        </div>
+        <ul id="errores" class="errores" role="alert"></ul>
+      </form>
+    </section>
+
+    <section>
+      <h2>Productos</h2>
+      <p id="vacio" hidden>Tu inventario está vacío.</p>
+      <table id="tabla" hidden>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>SKU</th>
+            <th class="num">Cantidad</th>
+            <th class="num">Mínimo</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="lista"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
