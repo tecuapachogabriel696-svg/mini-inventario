@@ -27,10 +27,10 @@ Esta vez el agente fue Claude (en claude.ai, con acceso a mi carpeta `mini-inven
 - `docs/diseno.md` no menciona `productos.js` en su estructura de archivos ni el endpoint `/health`, y sí menciona `/config`. Hay que actualizar el diseño cuando se conecte Supabase.
 
 ## Contexto
-<!-- Completa esta sección en tu Claude Code: /context antes, la revisión acotada, /compact, /context después. -->
-- Uso antes: ___ (de `/context`)
-- Uso después de `/compact`: ___
-- Qué cambió en la respuesta: ___
+Medí con `/context` en Claude Code, en la sesión donde pedí la revisión acotada:
+- **Antes de compactar** (con la revisión hecha): 54.2k de 1M tokens (5%); mensajes: 20.9k.
+- **Después de `/compact`:** 47.2k de 1M tokens (5%); mensajes: 13.9k. Se liberaron unos 7k tokens de mensajes.
+- **Qué cambió en la respuesta:** al pedir revisar solo `public/productos.js`, el agente dijo que no había validación y que el SKU repetido "casi seguro no se revisa en ningún lado". Eso es falso: `public/app.js` valida todos los campos y el SKU repetido (lo comprobamos al probar). Como no podía ver `app.js`, supuso. Al pedirle la misma revisión por segunda vez, ya con la conversación compactada, llegó a las mismas conclusiones: agregó que `editarProducto` no cambia `id` ni `created_at` y siguió proponiendo agregar validación. No acepté su propuesta, porque eso ya existe y el borrado y el historial no son parte de hoy.
 
 ## Comando o herramienta que aprobé o rechacé
 - **Aprobé** `gh pr merge 8 --merge` para pasar a `main` el trabajo del Día 2 (`docs/requisitos.md` y `docs/diseno.md`), porque el Día 3 los necesita en la rama principal.
