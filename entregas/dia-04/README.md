@@ -1,6 +1,6 @@
 # Bitácora — Día 4
 
-Pull request: (se agrega al abrirlo)
+Pull request: https://github.com/tecuapachogabriel696-svg/mini-inventario/pull/10
 
 ## Prompts clave
 1. (Claude en claude.ai) "Analiza a fondo la actividad del día 4 y empieza a trabajar." El agente preparó la migración SQL, el cambio de `public/productos.js` a Supabase, el inicio de sesión, `/config.js` y `.env.example`.
