@@ -9,19 +9,21 @@
 | Supabase Auth | Registro e inicio de sesión con correo y contraseña. |
 | Supabase (Postgres) | Tablas `productos` y `movimientos`, con Row Level Security (RLS). |
 
-Las llaves de Supabase van en `.env` (nunca se suben). Express solo entrega al navegador la URL y la llave pública `anon`; la llave `service_role` no se usa en este proyecto.
+Las llaves de Supabase van en `.env` (nunca se suben). Express solo entrega al navegador la URL y la llave pública (publishable o `anon`) en `/config.js`; si `SUPABASE_KEY` es la llave `service_role`/secret, el servidor se niega a arrancar.
 
 ## Estructura de archivos
 
 ```
-server.js          Express: sirve public/ y /config (URL + anon key)
+server.js            Express: sirve public/, /health, /config.js (URL + llave pública)
+                     y /vendor/supabase.js (cliente desde node_modules)
+.env.example         Variables necesarias, sin valores (.env nunca se sube)
 public/
-  index.html       Inicio de sesión y registro
-  inventario.html  Lista, formulario e historial
-  app.js           Lógica del navegador
+  index.html         Inicio de sesión, registro, formulario y lista
+  app.js             Pantalla y validación; no habla con Supabase directamente
+  productos.js       Único acceso a datos: sesión y tabla productos
   styles.css
 supabase/
-  schema.sql       Tablas, restricciones, RLS y trigger
+  migrations/        SQL de tablas, restricciones y RLS
 ```
 
 ## Base de datos
@@ -31,7 +33,7 @@ supabase/
 | Columna | Tipo | Regla |
 |---|---|---|
 | id | uuid | Llave primaria, `default gen_random_uuid()` |
-| user_id | uuid | Obligatorio, referencia a `auth.users(id)`, `default auth.uid()` |
+| user_id | uuid | Obligatorio, referencia a `auth.users(id)` con `on delete cascade`, `default auth.uid()` |
 | nombre | text | Obligatorio, no vacío |
 | sku | text | Obligatorio, `^[A-Za-z0-9-]+$`, único junto con `user_id` |
 | cantidad | integer | Obligatorio, `>= 0` |
@@ -55,7 +57,7 @@ Los registros los crea un **trigger** de Postgres en `productos` (después de in
 ```sql
 create table productos (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null default auth.uid() references auth.users(id),
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   nombre text not null check (length(trim(nombre)) > 0),
   sku text not null check (sku ~ '^[A-Za-z0-9-]+$'),
   cantidad integer not null check (cantidad >= 0),
@@ -112,7 +114,7 @@ sequenceDiagram
     participant E as Express
     participant S as Supabase Auth
     U->>N: Abre la web
-    N->>E: GET / y GET /config
+    N->>E: GET / y GET /config.js
     E-->>N: index.html + URL y anon key
     U->>N: Correo y contraseña
     N->>S: signInWithPassword

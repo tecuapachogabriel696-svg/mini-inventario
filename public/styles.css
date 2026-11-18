@@ -87,3 +87,19 @@ tr.bajo { background: #fff4e5; }
   background: #f59e0b;
   color: #3b2400;
 }
+
+.encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.encabezado h1 { margin: 0; }
+
+#sesion { display: flex; gap: 10px; align-items: center; font-size: .9rem; }
+#sesion[hidden] { display: none; }
+
+.aviso { grid-column: 1 / -1; margin: 0; color: #1f5fa8; }

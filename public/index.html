@@ -8,8 +8,32 @@
 </head>
 <body>
   <main>
-    <h1>Mini Inventario</h1>
+    <header class="encabezado">
+      <h1>Mini Inventario</h1>
+      <div id="sesion" hidden>
+        <span id="usuario-email"></span>
+        <button type="button" id="btn-salir">Cerrar sesión</button>
+      </div>
+    </header>
 
+    <section id="vista-acceso" hidden>
+      <h2>Inicia sesión</h2>
+      <form id="form-acceso" novalidate>
+        <label>Correo
+          <input name="email" type="email" autocomplete="email">
+        </label>
+        <label>Contraseña
+          <input name="password" type="password" autocomplete="current-password">
+        </label>
+        <div class="acciones">
+          <button type="submit" id="btn-entrar">Entrar</button>
+          <button type="button" id="btn-registrar">Crear cuenta</button>
+        </div>
+        <ul id="errores-acceso" class="errores" role="alert"></ul>
+      </form>
+    </section>
+
+    <div id="vista-inventario" hidden>
     <section>
       <h2 id="titulo-form">Agregar producto</h2>
       <form id="form-producto" novalidate>
@@ -49,8 +73,11 @@
         <tbody id="lista"></tbody>
       </table>
     </section>
+    </div>
   </main>
 
+  <script src="/config.js"></script>
+  <script src="/vendor/supabase.js"></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>

@@ -1,6 +1,15 @@
-// Lógica de la página: formulario, validación y lista.
-// No toca localStorage: todo el acceso a datos está en productos.js.
-import { listarProductos, agregarProducto, editarProducto } from './productos.js';
+// Lógica de la página: acceso, formulario, validación y lista.
+// No habla con Supabase directamente: todo el acceso a datos está en productos.js.
+import {
+  listarProductos,
+  agregarProducto,
+  editarProducto,
+  obtenerUsuario,
+  alCambiarSesion,
+  iniciarSesion,
+  registrarse,
+  cerrarSesion,
+} from './productos.js';
 
 const form = document.getElementById('form-producto');
 const tituloForm = document.getElementById('titulo-form');
@@ -146,15 +155,106 @@ form.addEventListener('submit', async (evento) => {
     minimo: Number(valores.minimo),
   };
 
-  if (editandoId) {
-    await editarProducto(editandoId, producto);
-  } else {
-    await agregarProducto(producto);
+  btnGuardar.disabled = true;
+  try {
+    if (editandoId) {
+      await editarProducto(editandoId, producto);
+    } else {
+      await agregarProducto(producto);
+    }
+    terminarEdicion();
+    await pintarLista();
+  } catch (error) {
+    mostrarErrores([error.message]);
+  } finally {
+    btnGuardar.disabled = false;
   }
-  terminarEdicion();
-  await pintarLista();
 });
 
 btnCancelar.addEventListener('click', terminarEdicion);
 
-pintarLista();
+// ---- Inicio de sesión ----
+
+const vistaAcceso = document.getElementById('vista-acceso');
+const vistaInventario = document.getElementById('vista-inventario');
+const formAcceso = document.getElementById('form-acceso');
+const erroresAcceso = document.getElementById('errores-acceso');
+const btnRegistrar = document.getElementById('btn-registrar');
+const sesion = document.getElementById('sesion');
+const usuarioEmail = document.getElementById('usuario-email');
+const btnSalir = document.getElementById('btn-salir');
+
+let usuarioActual;
+
+function mostrarMensajesAcceso(mensajes, clase = 'errores') {
+  erroresAcceso.className = clase;
+  erroresAcceso.replaceChildren(
+    ...mensajes.map((texto) => {
+      const li = document.createElement('li');
+      li.textContent = texto;
+      return li;
+    }),
+  );
+}
+
+function leerAcceso() {
+  const email = formAcceso.email.value.trim();
+  const password = formAcceso.password.value;
+  const mensajes = [];
+  if (!email) mensajes.push('El correo es obligatorio.');
+  if (!password) mensajes.push('La contraseña es obligatoria.');
+  else if (password.length < 6) mensajes.push('La contraseña debe tener al menos 6 caracteres.');
+  return { email, password, mensajes };
+}
+
+async function mostrarVista(usuario) {
+  // Evita repintar si la sesión no cambió (Supabase avisa varias veces).
+  if (usuario?.id === usuarioActual?.id && usuarioActual !== undefined) return;
+  usuarioActual = usuario;
+
+  vistaAcceso.hidden = Boolean(usuario);
+  vistaInventario.hidden = !usuario;
+  sesion.hidden = !usuario;
+  usuarioEmail.textContent = usuario?.email ?? '';
+
+  terminarEdicion();
+  lista.replaceChildren();
+  if (usuario) {
+    formAcceso.reset();
+    mostrarMensajesAcceso([]);
+    try {
+      await pintarLista();
+    } catch (error) {
+      mostrarErrores([error.message]);
+    }
+  }
+}
+
+formAcceso.addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+  const { email, password, mensajes } = leerAcceso();
+  if (mensajes.length > 0) return mostrarMensajesAcceso(mensajes);
+  try {
+    await iniciarSesion(email, password);
+  } catch (error) {
+    mostrarMensajesAcceso([error.message]);
+  }
+});
+
+btnRegistrar.addEventListener('click', async () => {
+  const { email, password, mensajes } = leerAcceso();
+  if (mensajes.length > 0) return mostrarMensajesAcceso(mensajes);
+  try {
+    const conSesion = await registrarse(email, password);
+    if (!conSesion) {
+      mostrarMensajesAcceso(['Cuenta creada. Revisa tu correo para confirmarla y luego inicia sesión.'], 'aviso');
+    }
+  } catch (error) {
+    mostrarMensajesAcceso([error.message]);
+  }
+});
+
+btnSalir.addEventListener('click', () => cerrarSesion());
+
+alCambiarSesion(mostrarVista);
+mostrarVista(await obtenerUsuario());
