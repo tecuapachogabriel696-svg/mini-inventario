@@ -12,7 +12,7 @@ Esta vez el agente fue Claude (en claude.ai, con acceso a mi carpeta `mini-inven
 - Playwright Test con `npm install -D @playwright/test` y `npx playwright install chromium`. Es lo que hace `npm init playwright@latest`, pero sin preguntas y sin reemplazar la configuración.
 
 ## 2. Exploración
-Como Claude no podía manejar `playwright-cli` desde mi terminal, la exploración la hizo un script de Playwright (`explorar.mjs`) con un navegador real (Chromium). El script abre la app, inicia sesión sin imprimir la contraseña, agrega un producto con cantidad 2 y mínimo 5, toma capturas en 1280x800 y 390x844, anota consola y red, y al final borra el producto que creó.
+Como Claude no podía manejar `playwright-cli` desde mi terminal, la exploración la hizo un script de Playwright (`explorar.mjs`) con un navegador real. El script abre la app, inicia sesión sin imprimir la contraseña, agrega un producto con cantidad 2 y mínimo 5, toma capturas en 1280x800 y 390x844, anota consola y red, y al final borra el producto que creó.
 
 - **Capturas:** `escritorio-1-acceso.png`, `escritorio-2-inventario.png`, `movil-1-acceso.png` y `movil-2-inventario.png`. Las de antes de la corrección son `movil-1-acceso-antes.png` y `movil-2-inventario-antes.png`.
 - **Reporte:** `reporte-exploracion-antes.md` (antes de la corrección) y `reporte-exploracion.md` (después).
@@ -57,6 +57,6 @@ Todo el paso 5 quedó en `correr-paso5.ps1`, que siempre regresa `app.js` aunque
 
 ## Cómo correr las pruebas
 ```powershell
-npm start                 # en una ventana aparte (recomendado en Windows)
+npm start                 # en una ventana aparte 
 npx playwright test       # en otra ventana
 ```
