@@ -1,0 +1,65 @@
+name: CI
+
+# Corre las pruebas de Playwright en cada pull request hacia main.
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Si subes otro commit al mismo PR, cancela la corrida anterior.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pruebas:
+    name: Pruebas de Playwright
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Los valores viven en Settings > Secrets and variables > Actions.
+      # Aquí solo se nombran; nunca se escriben.
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v6
+
+      - name: Instalar Node 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Revisar que existan los secretos
+        run: |
+          faltan=0
+          for nombre in SUPABASE_URL SUPABASE_KEY TEST_EMAIL TEST_PASSWORD; do
+            if [ -z "${!nombre}" ]; then
+              echo "::error::Falta el secreto $nombre (gh secret set $nombre)"
+              faltan=1
+            fi
+          done
+          exit $faltan
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Instalar Chromium y sus dependencias
+        run: npx playwright install --with-deps chromium
+
+      - name: Correr las pruebas
+        run: npx playwright test
+
+      - name: Subir el reporte de Playwright
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: reporte-playwright
+          path: playwright-report/
+          retention-days: 14
