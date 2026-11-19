@@ -14,7 +14,10 @@ module.exports = defineConfig({
   expect: { timeout: 10_000 },
   // Un solo usuario de prueba: las pruebas corren una por una.
   workers: 1,
-  reporter: 'list',
+  // En GitHub Actions (CI=true) también se genera el reporte HTML que se sube como artefacto.
+  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
+  // En CI falla si alguien dejó un test.only por error.
+  forbidOnly: Boolean(process.env.CI),
   use: {
     baseURL: 'http://localhost:3000',
     trace: 'retain-on-failure',
