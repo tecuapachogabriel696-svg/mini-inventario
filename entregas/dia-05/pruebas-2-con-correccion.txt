@@ -1,0 +1,9 @@
+
+Running 4 tests using 1 worker
+
+  ok 1 [chromium] › tests\inventario.spec.js:30:1 › inicia sesión con el usuario de prueba (3.0s)
+  ok 2 [chromium] › tests\inventario.spec.js:37:1 › rechaza una contraseña incorrecta (2.1s)
+  ok 3 [chromium] › tests\inventario.spec.js:43:1 › agrega un producto (4.1s)
+  ok 4 [chromium] › tests\inventario.spec.js:55:1 › marca un producto bajo el mínimo (4.9s)
+
+  4 passed (17.2s)

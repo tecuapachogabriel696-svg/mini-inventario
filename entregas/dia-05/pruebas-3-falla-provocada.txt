@@ -1,0 +1,47 @@
+
+Running 4 tests using 1 worker
+
+  ok 1 [chromium] › tests\inventario.spec.js:30:1 › inicia sesión con el usuario de prueba (2.6s)
+  ok 2 [chromium] › tests\inventario.spec.js:37:1 › rechaza una contraseña incorrecta (1.5s)
+  ok 3 [chromium] › tests\inventario.spec.js:43:1 › agrega un producto (4.0s)
+  x  4 [chromium] › tests\inventario.spec.js:55:1 › marca un producto bajo el mínimo (12.7s)
+
+
+  1) [chromium] › tests\inventario.spec.js:55:1 › marca un producto bajo el mínimo ─────────────────
+
+    Error: expect(locator).toHaveClass(expected) failed
+
+    Locator: locator('#lista tr').filter({ hasText: 'PW-1795061074736-7301' })
+    Expected pattern: /bajo/
+    Received string:  ""
+    Timeout: 10000ms
+
+    Call log:
+      - Expect "toHaveClass" locator('#lista tr').filter({ hasText: 'PW-1795061074736-7301' }) with timeout 10000ms
+      - waiting for locator('#lista tr').filter({ hasText: 'PW-1795061074736-7301' })
+        18 × locator resolved to <tr>…</tr>
+           - unexpected value ""
+
+
+      64 |     minimo: 5,
+      65 |   });
+    > 66 |   await expect(enElMinimo).toHaveClass(/bajo/);
+         |                            ^
+      67 |   await expect(enElMinimo).toContainText('Bajo mínimo');
+      68 |
+      69 |   // Una unidad arriba del mínimo: no se marca.
+        at C:\Users\User1\mini-inventario\tests\inventario.spec.js:66:28
+
+    Error Context: test-results\inventario-marca-un-producto-bajo-el-mínimo-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\inventario-marca-un-producto-bajo-el-mínimo-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\inventario-marca-un-producto-bajo-el-mínimo-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\inventario.spec.js:55:1 › marca un producto bajo el mínimo ──────────────────
+  3 passed (24.6s)
