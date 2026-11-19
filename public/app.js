@@ -93,7 +93,7 @@ async function pintarLista() {
   lista.replaceChildren(
     ...productos.map((p) => {
       const tr = document.createElement('tr');
-      const bajo = p.cantidad <= p.minimo;
+      const bajo = p.cantidad < p.minimo;
       if (bajo) tr.className = 'bajo';
 
       const nombre = celda(p.nombre);
