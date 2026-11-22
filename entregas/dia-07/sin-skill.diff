@@ -1,0 +1,47 @@
+diff --git a/tests/inventario.spec.js b/tests/inventario.spec.js
+index 5f3b7e8..10c84c3 100644
+--- a/tests/inventario.spec.js
++++ b/tests/inventario.spec.js
+@@ -77,3 +77,42 @@ test('marca un producto bajo el mínimo', async ({ page }) => {
+   await expect(arriba).not.toHaveClass(/bajo/);
+   await expect(arriba).not.toContainText('Bajo mínimo');
+ });
++
++test('edita un producto', async ({ page }) => {
++  await iniciarSesion(page);
++  await expect(page.locator('#vista-inventario')).toBeVisible();
++
++  const sku = skuUnico();
++  const fila = await agregarProducto(page, { nombre: 'Prueba editar', sku, cantidad: 20, minimo: 5 });
++  await expect(fila).toBeVisible();
++
++  // Al pulsar Editar, el formulario se llena con los datos del producto.
++  await fila.getByRole('button', { name: 'Editar' }).click();
++  await expect(page.locator('#titulo-form')).toHaveText('Editar Prueba editar');
++  await expect(page.locator('#btn-guardar')).toHaveText('Guardar cambios');
++  await expect(page.locator('#btn-cancelar')).toBeVisible();
++  await expect(page.locator('#form-producto [name=nombre]')).toHaveValue('Prueba editar');
++  await expect(page.locator('#form-producto [name=sku]')).toHaveValue(sku);
++  await expect(page.locator('#form-producto [name=cantidad]')).toHaveValue('20');
++  await expect(page.locator('#form-producto [name=minimo]')).toHaveValue('5');
++
++  // Cambia nombre, SKU y cantidad (por debajo del mínimo). Otro prefijo para que
++  // el SKU viejo no sea parte del nuevo y el filtro por texto no los confunda.
++  const skuNuevo = skuUnico('PWE');
++  creados.push(skuNuevo);
++  await page.locator('#form-producto [name=nombre]').fill('Prueba editada');
++  await page.locator('#form-producto [name=sku]').fill(skuNuevo);
++  await page.locator('#form-producto [name=cantidad]').fill('3');
++  await page.locator('#btn-guardar').click();
++
++  const editada = page.locator('#lista tr', { hasText: skuNuevo });
++  await expect(editada.locator('td')).toHaveText(['Prueba editada Bajo mínimo', skuNuevo, '3', '5', 'Editar']);
++  await expect(editada).toHaveClass(/bajo/);
++  // Se actualizó el mismo producto: ya no hay fila con el SKU viejo.
++  await expect(page.locator('#lista tr', { hasText: sku })).toHaveCount(0);
++
++  // El formulario regresa al modo de agregar.
++  await expect(page.locator('#titulo-form')).toHaveText('Agregar producto');
++  await expect(page.locator('#btn-guardar')).toHaveText('Agregar');
++  await expect(page.locator('#btn-cancelar')).toBeHidden();
++});
