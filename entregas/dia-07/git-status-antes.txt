@@ -1,0 +1,4 @@
+?? .claude/agents/
+?? .claude/skills/pruebas-inventario/
+?? entregas/dia-07/
+?? tests/editar-producto.spec.js
