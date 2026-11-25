@@ -1,0 +1,15 @@
+# Secretos: nunca entran a la imagen (incluye mcp-inventario/.env).
+.env
+**/.env
+**/.env.*
+
+# Dependencias: se instalan dentro de la imagen con npm ci.
+node_modules
+
+# Pruebas y entregas del curso: no se necesitan para correr la app.
+tests
+entregas
+
+# Historial de git y entornos de Python locales.
+.git
+**/.venv

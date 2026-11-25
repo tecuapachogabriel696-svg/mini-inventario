@@ -52,6 +52,7 @@ app.get('/vendor/supabase.js', (req, res) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.listen(PORT, () => {
+// 0.0.0.0: dentro de un contenedor hay que aceptar conexiones de fuera, no solo de localhost.
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Mini Inventario en http://localhost:${PORT}`);
 });
