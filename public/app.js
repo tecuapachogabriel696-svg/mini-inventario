@@ -26,7 +26,8 @@ function leerFormulario() {
   const datos = new FormData(form);
   return {
     nombre: datos.get('nombre').trim(),
-    sku: datos.get('sku').trim(),
+    // El SKU se guarda siempre en mayúsculas: "tor-001" y "TOR-001" son el mismo producto.
+    sku: datos.get('sku').trim().toUpperCase(),
     cantidad: datos.get('cantidad').trim(),
     minimo: datos.get('minimo').trim(),
   };
@@ -49,7 +50,8 @@ function validar(valores, productos) {
     mensajes.push('El SKU es obligatorio.');
   } else if (!/^[A-Za-z0-9-]+$/.test(valores.sku)) {
     mensajes.push('El SKU solo acepta letras, números y guiones.');
-  } else if (productos.some((p) => p.sku === valores.sku && p.id !== editandoId)) {
+  } else if (productos.some((p) => p.sku.toUpperCase() === valores.sku && p.id !== editandoId)) {
+    // Compara sin distinguir mayúsculas: también cubre SKU antiguos guardados en minúsculas.
     mensajes.push(`Ya tienes un producto con el SKU ${valores.sku}.`);
   }
 
