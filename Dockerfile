@@ -14,6 +14,8 @@ COPY package.json package-lock.json ./
 # Instala exactamente las versiones del lock, sin las de desarrollo (Playwright).
 RUN npm ci --omit=dev
 
+RUN npm run no-existe
+
 # Copia solo lo que la app necesita para correr. Nada de .env ni llaves:
 # SUPABASE_URL y SUPABASE_KEY llegan como variables de entorno al arrancar.
 COPY server.js ./
