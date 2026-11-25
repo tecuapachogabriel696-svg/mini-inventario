@@ -35,7 +35,7 @@ supabase/
 | id | uuid | Llave primaria, `default gen_random_uuid()` |
 | user_id | uuid | Obligatorio, referencia a `auth.users(id)` con `on delete cascade`, `default auth.uid()` |
 | nombre | text | Obligatorio, no vacío |
-| sku | text | Obligatorio, `^[A-Za-z0-9-]+$`, único junto con `user_id` |
+| sku | text | Obligatorio, `^[A-Za-z0-9-]+$`, único junto con `user_id` sin distinguir mayúsculas y minúsculas; la web lo guarda en mayúsculas |
 | cantidad | integer | Obligatorio, `>= 0` |
 | minimo | integer | Obligatorio, `>= 5` |
 | created_at | timestamptz | `default now()` |
@@ -65,16 +65,20 @@ create table productos (
   created_at timestamptz not null default now(),
   unique (user_id, sku)
 );
+
+-- Día 10 (#18): "TOR-001" y "tor-001" cuentan como el mismo SKU.
+create unique index productos_user_sku_sin_mayusculas_unico
+  on productos (user_id, upper(sku));
 ```
 
 ## Qué valida cada capa
 
 | Capa | Qué valida | Por qué |
 |---|---|---|
-| Navegador (HTML + JS) | Campos obligatorios, formato del SKU, enteros, `cantidad >= 0`, `minimo >= 5`, confirmación antes de borrar. | Dar mensajes claros al instante. **No es seguridad**: se puede saltar. |
+| Navegador (HTML + JS) | Campos obligatorios, formato del SKU, SKU repetido sin distinguir mayúsculas, enteros, `cantidad >= 0`, `minimo >= 5`, confirmación antes de borrar. | Dar mensajes claros al instante. **No es seguridad**: se puede saltar. |
 | Express | Nada de datos del inventario; solo sirve archivos y la configuración pública. | No tiene API, así que no hay nada que validar ahí. Evita piezas innecesarias. |
 | Supabase Auth | Correo y contraseña válidos; emite la sesión del usuario. | Identidad. |
-| Postgres (restricciones) | `not null`, `check` de SKU/cantidad/mínimo, `unique (user_id, sku)`. | Última línea de defensa: datos inválidos no entran aunque alguien salte el navegador. |
+| Postgres (restricciones) | `not null`, `check` de SKU/cantidad/mínimo, `unique (user_id, sku)` e índice único sobre `(user_id, upper(sku))`. | Última línea de defensa: datos inválidos no entran aunque alguien salte el navegador. |
 | Postgres (RLS) | `productos`: select/insert/update/delete solo si `user_id = auth.uid()`. `movimientos`: solo select de los propios; sin insert/update/delete para usuarios. | Cada quien ve y modifica solo lo suyo (H1, H3, H4, H5). |
 
 ## Diagramas

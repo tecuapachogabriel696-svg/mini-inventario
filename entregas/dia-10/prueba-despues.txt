@@ -1,0 +1,14 @@
+
+Running 7 tests using 1 worker
+
+(node:14544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chromium] › tests\editar-producto.spec.js:43:1 › edita el nombre, SKU y cantidad de un producto (5.2s)
+  ok 2 [chromium] › tests\editar-producto.spec.js:67:1 › rechaza editar un producto con el SKU de otro (4.7s)
+  ok 3 [chromium] › tests\inventario.spec.js:30:1 › inicia sesión con el usuario de prueba (1.3s)
+  ok 4 [chromium] › tests\inventario.spec.js:37:1 › rechaza una contraseña incorrecta (1.3s)
+  ok 5 [chromium] › tests\inventario.spec.js:43:1 › agrega un producto (2.7s)
+  ok 6 [chromium] › tests\inventario.spec.js:55:1 › marca un producto bajo el mínimo (4.1s)
+  ok 7 [chromium] › tests\sku-duplicado.spec.js:33:1 › no deja registrar el mismo SKU escrito con otras mayúsculas (2.6s)
+
+  7 passed (24.3s)
